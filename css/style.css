@@ -1,0 +1,28 @@
+.container {
+    width: 1140px;
+    margin: 0 auto;
+}
+
+.success {
+    width: 300px;
+    margin: 0px auto; 
+    margin-bottom: 20px;
+    color: #3c763d; 
+    background: #dff0d8; 
+    border: 1px solid #3c763d;
+    border-radius: 5px; 
+}
+
+.error {
+    width: 300px;
+    margin: 0px auto; 
+    margin-bottom: 20px;
+    border: 1px solid #a94442; 
+    color: #a94442; 
+    background: #f2dede; 
+    border-radius: 5px; 
+}
+
+.ta-c {
+    text-align: center;
+}
