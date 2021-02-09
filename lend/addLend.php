@@ -24,7 +24,7 @@ class AddLend extends Lend {
             if(count($resultBook) == 0) { array_push($this->err, "The book id not exist"); }
         }
         if($this->lender_id) {
-            $querylenderExist = "SELECT * FROM lenders WHERE id='$this->lender_id'";
+            $queryLenderExist = "SELECT * FROM lenders WHERE id='$this->lender_id'";
             $resultLender = $this->getData($conn, $queryLenderExist);
             if(count($resultLender) == 0) { array_push($this->err, "The lender id not exist"); }
         }
@@ -33,7 +33,7 @@ class AddLend extends Lend {
     }
 
     public function sendData($conn) {
-        $this->query = "INSERT INTO lends (book_id, lender_id, lend_date) VALUES ('$this->book_id', '$this->lender_id', '$this->lend_date')";
+        $this->query = "INSERT INTO lends (book_id, lender_id, lend_date, return_date) VALUES ('$this->book_id', '$this->lender_id', '$this->lend_date', '$this->return_date')";
         $checkExist = "SELECT * FROM lends WHERE book_id='$this->book_id' AND lender_id='$this->lender_id' AND lend_date='$this->lend_date'";
         $result = $this->sendQueryToDb($conn, $checkExist, $this->query);
         return $result;

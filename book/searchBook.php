@@ -3,8 +3,14 @@ require_once('book.php');
 
 class SearchBook extends Book {
 
-    private $query = "SELECT * FROM books";
+    private $query = '';
+    private $queryUnion1 = "(SELECT books.*, 'yes' AS available FROM `books` LEFT JOIN lends ON lends.book_id = books.id WHERE (lends.return_date IS NOT NULL OR lends.lend_date IS NULL)";
+    private $queryUnion2 = ") UNION ALL (SELECT books.*, 'no' AS available FROM `books` LEFT JOIN lends ON lends.book_id = books.id WHERE lends.return_date IS NULL AND lends.lend_date IS NOT NULL";
+    private $queryUnion3 = ") ORDER BY title";
+    private $queryConditions = '';
     private $queryExist = false;
+    private $checkQueryUnion = false;
+    private $tableTitles = ["Id", "ISBN", "Title", "Number of pages", "Publish date", "Price", "Editor id", "Author id", "Theme"];
 
     public function __construct($get) {
         if(isset($get['id'])) { $this->id = filter_var(trim($get['id']), FILTER_SANITIZE_NUMBER_INT); }
@@ -16,11 +22,17 @@ class SearchBook extends Book {
         if(isset($get['editor_id'])) { $this->editor_id = filter_var(trim($get['editor_id']), FILTER_SANITIZE_NUMBER_INT); }
         if(isset($get['author_id'])) { $this->author_id = filter_var(trim($get['author_id']), FILTER_SANITIZE_NUMBER_INT); }
         if(isset($get['theme'])) { $this->theme = filter_var(trim($get['theme']), FILTER_SANITIZE_STRING); }
+        if(isset($get['available'])) {
+            $this->checkQueryUnion = true;
+            array_push($this->tableTitles, 'Available');
+        } else { $this->query = "SELECT * FROM books"; }
+
+        $this->checkData();
     }
 
 
     private function checkData() {
-        $this->buildQuery('id', $this->id);
+        $this->buildQuery('books.id', $this->id);
         $this->buildQuery('isbn', $this->isbn);
         $this->buildQuery('title', $this->title);
         $this->buildQuery('nb_pages', $this->nb_pages);
@@ -29,24 +41,30 @@ class SearchBook extends Book {
         $this->buildQuery('editor_id', $this->editor_id);
         $this->buildQuery('author_id', $this->author_id);
         $this->buildQuery('theme', $this->theme);
+        if ($this->checkQueryUnion) {
+            $this->query = $this->queryUnion1 . $this->queryConditions . $this->queryUnion2 . $this->queryConditions . $this->queryUnion3;
+        } else {
+            $this->query = "SELECT * FROM books" . $this->queryConditions . " ORDER BY title";
+        }
     }
 
     private function buildQuery($column, $val) {
         if($val) {
-            if($this->queryExist) {
-                $this->query .= " AND ";
-            } else {
-                $this->query .= " WHERE ";
+            if(!$this->queryExist && !$this->checkQueryUnion) {
+                $this->queryConditions .= " WHERE ";
                 $this->queryExist = true;
+            } else {
+                $this->queryConditions .= " AND ";
             }
-            $this->query .= $column . " = '" . $val . "'";
+            $this->queryConditions .= $column . " = '" . $val . "'";
         }
     }
 
 
     public function sendData($conn) {
         $result = $this->getData($conn, $this->query);
-        return ["result" => $result, "query" => ["Id" => $this->id, "ISBN" => $this->isbn, "Title" => $this->title, "Number of pages" => $this->nb_pages, "Publish date" => $this->publish_date, "Price" => $this->price, "Editor id" => $this->editor_id, "Author id" => $this->author_id, "Theme" => $this->theme]];
+        echo $this->query;
+        return ["result" => $result, "tableTitles" => $this->tableTitles, "query" => ["Id" => $this->id, "ISBN" => $this->isbn, "Title" => $this->title, "Number of pages" => $this->nb_pages, "Publish date" => $this->publish_date, "Price" => $this->price, "Editor id" => $this->editor_id, "Author id" => $this->author_id, "Theme" => $this->theme]];
     }
 }
 

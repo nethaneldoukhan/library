@@ -6,6 +6,11 @@ const formSearchBooks = `
         <input type="number" name="editor_id" placeholder="editor id">
         <input type="number" name="author_id" placeholder="author id">
         <input type="text" name="theme" placeholder="theme">
+
+        <br />
+        <label for="available">Check if available</label>
+        <input type="checkbox" id="available" name="available">
+
         <button type="submit" name="searchBook">Search book</button>
     </form>
 `;
@@ -22,6 +27,14 @@ const formSearchLenders = `
         <input type="tel" name="tel" placeholder="tel">
         <input type="email" name="email" placeholder="email">
         <input type="number" name="nb_lends" placeholder="number lends">
+        <select name="join">
+            <option value="null">ADD JOIN</option>
+            <option value="count">Total of lend(s)</option>
+            <option value="countNull">Not lend</option>
+            <option value="lend">Join lend(s)</option>
+            <option value="lendReturnNull">Join is not returned</option>
+            <option value="lendReturnNotNull">Join is returned</option>
+        </select>
         <button type="submit" name="searchLender">Search lender</button>
     </form>
 `;

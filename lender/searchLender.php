@@ -3,9 +3,15 @@ require_once('lender.php');
 
 class SearchLender extends Lender {
 
-    private $query = "SELECT * FROM lenders";
+    private $query = "SELECT lenders.*";
+    private $table = '';
     private $queryExist = false;
+    private $tableTitles = ["Id", "Lastname", "Firstname", "Adress", "Zipcode", "City", "Country", "Telephone", "Email", "Create date"];
     private $nb_lends = '';
+    private $join = '';
+    private $count = '';
+    private $having = '';
+    private $group = '';
     private $agregArray = ['=', '<', '>'];
     private $agreg = '';
 
@@ -19,7 +25,28 @@ class SearchLender extends Lender {
         if(isset($get['country'])) { $this->country = filter_var(trim($get['country']), FILTER_SANITIZE_STRING); }
         if(isset($get['tel'])) { $this->tel = filter_var(trim($get['tel']), FILTER_SANITIZE_NUMBER_INT); }
         if(isset($get['email'])) { $this->email = filter_var(trim($get['email']), FILTER_SANITIZE_STRING); }
-        if(isset($get['nb_lends'])) { $this->nb_lends = filter_var(trim($get['nb_lends']), FILTER_SANITIZE_NUMBER_INT); }
+        // $get = ['join' => 'lend'];
+        if(isset($get['join'])) {
+            if($get['join'] === 'count' || $get['join'] === 'countNull') {
+                $this->join = ", COUNT(lends.id) AS Total_lends FROM lenders LEFT JOIN lends ON lenders.id = lends.lender_id";
+                $this->group = " GROUP BY lenders.id";
+                if($get['join'] === 'countNull') { $this->having = " HAVING Total_lends = 0"; }                
+                array_push($this->tableTitles, 'Total of lend(s)');
+            } elseif($get['join'] === 'lend' || $get['join'] === 'lendReturnNull' || $get['join'] === 'lendReturnNotNull') {
+                if($get['join'] === 'lend') {
+                    $this->join = ", lends.id AS lend_id, lends.book_id, lends.lend_date, lends.return_date FROM lenders LEFT JOIN lends ON lends.lender_id = lenders.id";
+                } else {
+                    $this->join = ", lends.id AS lend_id, lends.book_id, lends.lend_date, lends.return_date FROM lenders JOIN lends ON lends.lender_id = lenders.id";
+                }
+                array_push($this->tableTitles, 'Lend id', 'Book id', 'Lend date', 'Return date');
+                if($get['join'] === 'lendReturnNull') {
+                    $this->having = " HAVING lends.return_date IS NULL";
+                } elseif($get['join'] === 'lendReturnNotNull') {
+                    $this->having = " HAVING lends.return_date IS NOT NULL";
+                }
+            } else { $this->table = " FROM lenders"; }
+        } else { $this->table = " FROM lenders"; }
+
         if(isset($get['agreg']) && in_array($get['agreg'], $this->$agregArray) && $this->nb_lends) {
             $this->agreg = filter_var(trim($get['agreg']), FILTER_SANITIZE_STRING);
         } else {
@@ -31,7 +58,8 @@ class SearchLender extends Lender {
 
 
     private function checkData() {
-        $this->buildQuery('id', $this->id);
+        $this->query .= $this->join .= $this->table;
+        $this->buildQuery('lenders.id', $this->id);
         $this->buildQuery('lastname', $this->lastname);
         $this->buildQuery('firstname', $this->firstname);
         $this->buildQuery('adress', $this->adress);
@@ -40,6 +68,7 @@ class SearchLender extends Lender {
         $this->buildQuery('country', $this->country);
         $this->buildQuery('tel', $this->tel);
         $this->buildQuery('email', $this->email);
+        $this->query .= $this->group . $this->having . " ORDER BY lastname, firstname";
     }
 
     private function buildQuery($column, $val) {
@@ -56,8 +85,9 @@ class SearchLender extends Lender {
 
 
     public function sendData($conn) {
+        echo 'REQUEST: ' . $this->query;
         $result = $this->getData($conn, $this->query);
-        return ["result" => $result, "query" => ["Id" => $this->id, "Lastname" => $this->lastname, "Firstname" => $this->firstname, "Adress" => $this->adress, "Zipcode" => $this->zipcode, "City" => $this->city, "Country" => $this->country, "Telephone" => $this->tel, "Email" => $this->email, "Count of lend(s)" => "", "Create date" => ""]];
+        return ["result" => $result, "tableTitles" => $this->tableTitles, "query" => ["Id" => $this->id, "Lastname" => $this->lastname, "Firstname" => $this->firstname, "Adress" => $this->adress, "Zipcode" => $this->zipcode, "City" => $this->city, "Country" => $this->country, "Telephone" => $this->tel, "Email" => $this->email]];
     }
 }
 

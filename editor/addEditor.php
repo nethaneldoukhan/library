@@ -26,7 +26,7 @@ class AddEditor extends Editor {
         if(empty($this->country)) { array_push($this->err, "The country is required"); }
         if(empty($this->tel)) { array_push($this->err, "The telephone number is required"); }
         if(empty($this->email)) { array_push($this->err, "The email is required"); }
-        if(($this->email && !filter_var($this->email, FILTER_VALIDATE_EMAIL)) { array_push($this->err, 'The email is not valid'); }
+        if($this->email && !filter_var($this->email, FILTER_VALIDATE_EMAIL)) { array_push($this->err, 'The email is not valid'); }
 
         
         return $this->err;

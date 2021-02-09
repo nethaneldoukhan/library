@@ -5,6 +5,7 @@ class SearchEditor extends Editor {
 
     private $query = "SELECT * FROM editors";
     private $queryExist = false;
+    private $tableTitles = ["Id", "Lastname", "Firstname", "Adress", "Zipcode", "City", "Country", "Telephone", "Email"];
 
     public function __construct($get) {
         if(isset($get['id'])) { $this->id = filter_var(trim($get['id']), FILTER_SANITIZE_NUMBER_INT); }
@@ -47,7 +48,7 @@ class SearchEditor extends Editor {
 
     public function sendData($conn) {
         $result = $this->getData($conn, $this->query);
-        return ["result" => $result, "query" => ["Id" => $this->id, "Lastname" => $this->lastname, "Firstname" => $this->firstname, "Adress" => $this->adress, "Zipcode" => $this->zipcode, "City" => $this->city, "Country" => $this->country, "Telephone" => $this->tel, "Email" => $this->email]];
+        return ["result" => $result, "tableTitles" => $this->tableTitles, "query" => ["Id" => $this->id, "Lastname" => $this->lastname, "Firstname" => $this->firstname, "Adress" => $this->adress, "Zipcode" => $this->zipcode, "City" => $this->city, "Country" => $this->country, "Telephone" => $this->tel, "Email" => $this->email]];
     }
 }
 

@@ -27,8 +27,8 @@ abstract class Lend {
             } else {
                 if ($conn->query($query) === TRUE) {
                     $last_id = $conn->insert_id;
-                    return ["class" => "success", "text" => "New record created successfully. Last inserted ID is: " . $last_id];
-                } else {
+                        return ["class" => "success", "text" => "New record created successfully. Last inserted ID is: " . $last_id];
+                    } else {
                     return ["class" => "error", "text" => "An error has occurred. Please try again"];
                 }
             }

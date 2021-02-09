@@ -5,6 +5,7 @@ class SearchAuthor extends Author {
 
     private $query = "SELECT * FROM authors";
     private $queryExist = false;
+    private $tableTitles = ["Id", "Lastname", "Firstname", "City", "Year of birth"];
 
     public function __construct($get) {
         if(isset($get['id'])) { $this->id = filter_var(trim($get['id']), FILTER_SANITIZE_NUMBER_INT); }
@@ -39,7 +40,7 @@ class SearchAuthor extends Author {
 
     public function sendData($conn) {
         $result = $this->getData($conn, $this->query);
-        return ["result" => $result, "query" => ["Id" => $this->id, "Lastname" => $this->lastname, "Firstname" => $this->firstname, "City" => $this->city, "Year of birth" => $this->birth_year]];
+        return ["result" => $result, "tableTitles" => $this->tableTitles, "query" => ["Id" => $this->id, "Lastname" => $this->lastname, "Firstname" => $this->firstname, "City" => $this->city, "Year of birth" => $this->birth_year]];
     }
 }
 

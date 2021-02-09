@@ -9,6 +9,10 @@ $messageDelete = [];
 
 
 // $servername = 'localhost';
+// $username = 'root';
+// $password = '';
+// $db = 'nati006_library';
+
 $servername = 'mysql-nati006.alwaysdata.net';
 $username = 'nati006';
 $password = 'Nati1980.';
@@ -174,6 +178,34 @@ if(isset($_POST['deleteEditor'])) {
     // if ($year && strlen($year) != 4) { array_push($errors, "The year of death is not valid"); }
     // var_dump($errors);
 
+
+// LOGIN USER
+if (isset($_POST['login_user'])) {
+    $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
+    $password = filter_var($_POST['password'], FILTER_SANITIZE_STRING);
+  
+    if (empty($username)) {
+        array_push($errorsAdd, "Username is required");
+    }
+    if (empty($password)) {
+        array_push($errorsAdd, "Password is required");
+    }
+  
+    if (count($errorsAdd) == 0) {
+        $password = md5($password);
+        $query = "SELECT * FROM users WHERE username='$username' AND password='$password'";
+        $results = $conn->query($query);
+        if ($results->num_rows > 0) {
+            $row = $results->fetch_assoc();
+            
+            $_SESSION['username'] = $row['username'];
+            $_SESSION['success'] = "You are now logged in";
+            header('location: index.php');
+        }else {
+            array_push($errorsAdd, "Wrong username/password combination");
+        }
+    }
+}
 
 
 $conn->close();
