@@ -12,6 +12,7 @@ if (isset($_GET['logout'])) {
     unset($_SESSION['username']);
     header("location: login.php");
 }
+
 ?>
 
 <!DOCTYPE html>

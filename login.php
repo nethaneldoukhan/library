@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Registration system PHP and MySQL</title>
+  <title>Login - Library</title>
   <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 <body>
@@ -26,8 +26,8 @@
 				<button type="submit" class="btn" name="login_user">Login</button>
 			</div>
 			<p>
-				username: admin <br />
-				password: 0000
+				username: nati <br />
+				password: 150489
 			</p>
 		</form>
   	</div>
