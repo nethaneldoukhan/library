@@ -9,15 +9,15 @@ $messageAdd = [];
 $messageDelete = [];
 
 
-$servername = 'localhost';
-$username = 'root';
-$password = '';
-$db = 'nati006_library';
-
-// $servername = 'mysql-nati006.alwaysdata.net';
-// $username = 'nati006';
-// $password = 'Nati1980.';
+// $servername = 'localhost';
+// $username = 'root';
+// $password = '';
 // $db = 'nati006_library';
+
+$servername = 'mysql-nati006.alwaysdata.net';
+$username = 'nati006';
+$password = 'Nati1980.';
+$db = 'nati006_library';
 
 $conn = new mysqli($servername, $username, $password, $db);
 if($conn->connect_error) {
