@@ -4,8 +4,8 @@ require_once('book.php');
 class SearchBook extends Book {
 
     private $query = '';
-    private $queryUnion1 = "SELECT *, 'yes' AS available FROM books WHERE ((SELECT book_id FROM lends WHERE books.id = lends.book_id AND lend_date IS NOT NULL GROUP BY book_id HAVING COUNT(*) = 0) OR id NOT IN (SELECT book_ID FROM lends))";
-    private $queryUnion2 = " UNION ALL SELECT *, 'no' AS available FROM books WHERE (SELECT book_id FROM lends WHERE books.id = lends.book_id AND lend_date IS NOT NULL GROUP BY book_id HAVING COUNT(*) > 0)";
+    private $queryUnion1 = "SELECT *, 'yes' AS available FROM books WHERE id NOT IN (SELECT book_id FROM lends WHERE return_date IS NULL GROUP BY book_id)";
+    private $queryUnion2 = " UNION ALL SELECT *, 'no' AS available FROM books WHERE id IN (SELECT book_id FROM lends WHERE return_date IS NULL GROUP BY book_id)";
     private $queryUnion3 = " ORDER BY title";
     private $queryConditions = '';
     private $queryExist = false;
